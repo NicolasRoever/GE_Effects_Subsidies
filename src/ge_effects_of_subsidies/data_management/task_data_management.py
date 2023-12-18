@@ -28,7 +28,6 @@ def task_clean_farm_subsidy_data(
 
 #This was only the example task code
     
-    
 # def task_clean_data_python(
 #     depends_on=clean_data_deps,
 #     produces=BLD / "python" / "data" / "data_clean.csv",
