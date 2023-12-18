@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 import pytest
-from ge_effects_of_subsidies.config import TEST_DIR
+import os
+from ge_effects_of_subsidies.config import TEST_DIR, FARM_SUBSIDY_DATA_PATH
 from ge_effects_of_subsidies.data_management import clean_data
 from ge_effects_of_subsidies.utilities import read_yaml
+from ge_effects_of_subsidies.data_management.clean_data import _get_all_file_data_paths, _combine_all_data_into_df
 
 
 @pytest.fixture()
@@ -14,6 +16,15 @@ def data():
 @pytest.fixture()
 def data_info():
     return read_yaml(TEST_DIR / "data_management" / "data_info_fixture.yaml")
+
+def test_get_all_file_data_paths_correct_number_datasets():
+    data_paths = _get_all_file_data_paths(FARM_SUBSIDY_DATA_PATH)
+    assert len(data_paths) == 2
+
+def test_combine_all_data_into_df_correct_shape():
+    file_paths = _get_all_file_data_paths(FARM_SUBSIDY_DATA_PATH)
+    df = _combine_all_data_into_df(file_paths)
+    assert df.shape == (2241998, 21)
 
 
 def test_clean_data_drop_columns(data, data_info):

@@ -12,6 +12,9 @@
 # bld
 bld/
 
+#Data
+src/ge_effects_of_subsidies/data/FarmSubsidyData
+
 # latex
 *.aux
 *.bbl

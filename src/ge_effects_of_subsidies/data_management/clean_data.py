@@ -1,7 +1,8 @@
 """Function(s) for cleaning the data set(s)."""
 
 import pandas as pd
-
+import os
+from pathlib import Path
 
 def clean_data(data, data_info):
     """Clean data set.
@@ -34,3 +35,25 @@ def clean_data(data, data_info):
     data[data_info["outcome_numerical"]] = numerical_outcome
 
     return data
+
+
+def _get_all_file_data_paths(directory):
+    file_names = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    data_paths = [Path(directory / item) for item in file_names]
+    return data_paths
+
+
+
+def _combine_all_data_into_df(file_paths):
+    dfs = []
+
+    for file_path in file_paths:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_path)
+
+        # Append the DataFrame to the combined_df
+        dfs.append(df)
+
+    combined_df = pd.concat(dfs, ignore_index=True)
+
+    return combined_df
