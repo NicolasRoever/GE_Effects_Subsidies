@@ -20,6 +20,8 @@ def task_plot_subsidies_2014(depends_on = CLEANED_DATA_PATH,
     figure = _create_subsidy_map_2014(data, MAPBOX_TOKEN)
     figure.write_image(produces)
 
+
+
 def task_plot_subsidies_per_year(depends_on = CLEANED_DATA_PATH, 
                                  produces = BLD / "figures" / "subsidies_per_year.png"):
     
