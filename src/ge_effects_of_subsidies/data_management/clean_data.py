@@ -19,8 +19,8 @@ def _clean_farm_subsidy_data_for_analysis(df):
     data["amount_euro"] = df["amount_original"].astype('float32')
     data["nuts_3"] = df["nuts3"].astype('category')
     data["zipcode"] = _generate_zipcode_column(df)
-    data["longitude"] = _extract_longitude(data["zipcode"])
-    data["latitude"] = _extract_latitude(data["zipcode"])
+    data["longitude"] = _extract_longitude(np.array(data.loc[:, "zipcode"]).astype('str'))
+    data["latitude"] = _extract_latitude(np.array(data.loc[:, "zipcode"]).astype('str'))
 
 
     return data
@@ -33,12 +33,14 @@ def _get_all_file_data_paths(directory):
     return data_paths
 
 def _extract_longitude(zipcodes, country = "de"):
+    _check_if_input_is_type_U5D(zipcodes)
     nomi = pgeocode.Nominatim(country)
     locations = nomi.query_postal_code(zipcodes)
     return locations["longitude"]
 
 
 def _extract_latitude(zipcodes, country = "de"):
+    _check_if_input_is_type_U5D(zipcodes)
     nomi = pgeocode.Nominatim(country)
     locations = nomi.query_postal_code(zipcodes)
     return locations["latitude"]
@@ -64,11 +66,15 @@ def _generate_zipcode_column(df):
     #There is a mistake in the coding of one guy
     mistake_indedx = df[df['recipient_name'] == 'Struck-Sievers, Joachim'].index
     zipcodes[mistake_indedx] = '16244'
-    return zipcodes
+    return zipcodes.astype('str')
 
    
 def _extract_zipcode(address):
     return address.str.extract('(\d+)', expand=False)
+
+def _check_if_input_is_type_U5D(input):
+    if not isinstance(input, pd.api.types.dtypes.U5Dtype):
+        raise TypeError(f"Input data must be of type u5d. Remember that is the requirement for the geo function.")
 
 
 

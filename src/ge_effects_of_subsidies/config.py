@@ -9,6 +9,10 @@ PAPER_DIR = SRC.joinpath("..", "..", "paper").resolve()
 
 FARM_SUBSIDY_DATA_PATH = SRC / "data" / "FarmSubsidyData" / ""
 
+CLEANED_DATA_PATH = BLD / "python" / "data" / "data_farm_subsidy_clean.pkl"
+
 GROUPS = ["marital_status", "qualification"]
+
+MAPBOX_TOKEN =  "pk.eyJ1Ijoibmljb3JvZXZlciIsImEiOiJjbHFjZmgwNmYwMWN5MmtrMnB0cXFzeHZxIn0.k_McexSZGPeL8QmDeqEDeg"
 
 __all__ = ["BLD", "SRC", "TEST_DIR", "GROUPS"]

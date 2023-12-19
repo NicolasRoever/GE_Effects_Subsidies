@@ -7,8 +7,29 @@ import pytask
 
 from ge_effects_of_subsidies.analysis.model import fit_logit_model, load_model
 from ge_effects_of_subsidies.analysis.predict import predict_prob_by_age
-from ge_effects_of_subsidies.config import BLD, GROUPS, SRC
+from ge_effects_of_subsidies.config import BLD, GROUPS, SRC, CLEANED_DATA_PATH, MAPBOX_TOKEN
 from ge_effects_of_subsidies.utilities import read_yaml
+from ge_effects_of_subsidies.analysis.descriptive_analysis import _create_subsidy_map_2014, _plot_subsidies_per_year
+
+
+
+def task_plot_subsidies_2014(depends_on = CLEANED_DATA_PATH, 
+                             produces = BLD / "figures" / "subsidies_2014_map.png"):
+    
+    data = pd.read_pickle(depends_on)
+    figure = _create_subsidy_map_2014(data, MAPBOX_TOKEN)
+    figure.write_image(produces)
+
+def task_plot_subsidies_per_year(depends_on = CLEANED_DATA_PATH, 
+                                 produces = BLD / "figures" / "subsidies_per_year.png"):
+    
+    data = pd.read_pickle(depends_on)
+    figure = _plot_subsidies_per_year(data)
+    figure.write_image(produces)
+
+
+
+##Example Code
 
 fit_model_deps = {
     "scripts": [Path("model.py"), Path("predict.py")],
