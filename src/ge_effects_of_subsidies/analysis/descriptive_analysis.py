@@ -34,3 +34,15 @@ def _plot_subsidies_per_year(data):
     subsidies_by_year = data.groupby("year")["amount_euro"].sum()
     fig = px.line(subsidies_by_year, x=subsidies_by_year.index, y="amount_euro")
     return fig
+
+
+
+def _plot_subsidies_per_gdp_per_year(data, gdp_data):
+    subsidies_by_year = data.groupby("year")["amount_euro"].sum()
+    subsidy_by_year_df =  pd.DataFrame(subsidies_by_year).reset_index()
+    subsidy_by_year_df_merge = subsidy_by_year_df.merge(gdp_data, on="year", how="left")
+    subsidy_by_year_df_merge["subsidy_per_gdp"] = subsidy_by_year_df_merge["amount_euro"] / subsidy_by_year_df_merge["gdp"]
+
+
+    fig = px.line(subsidy_by_year_df_merge, x="year", y="subsidy_per_gdp")
+    return fig

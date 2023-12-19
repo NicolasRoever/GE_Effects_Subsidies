@@ -24,6 +24,16 @@ def _clean_farm_subsidy_data_for_analysis(df):
 
 
     return data
+
+
+def _clean_german_gdp_data(gdp_data):
+
+    clean_gdp_data = pd.DataFrame()
+
+    clean_gdp_data["year"] = gdp_data["date"].str.extract("(\d{4})").astype("int16")
+    clean_gdp_data["gdp"] = gdp_data[" GDP ( Billions of US $)"]
+
+    return clean_gdp_data
     
 
 
@@ -33,14 +43,14 @@ def _get_all_file_data_paths(directory):
     return data_paths
 
 def _extract_longitude(zipcodes, country = "de"):
-    _check_if_input_is_type_U5D(zipcodes)
+    # _check_if_input_is_type_U5D(zipcodes)
     nomi = pgeocode.Nominatim(country)
     locations = nomi.query_postal_code(zipcodes)
     return locations["longitude"]
 
 
 def _extract_latitude(zipcodes, country = "de"):
-    _check_if_input_is_type_U5D(zipcodes)
+   # _check_if_input_is_type_U5D(zipcodes)
     nomi = pgeocode.Nominatim(country)
     locations = nomi.query_postal_code(zipcodes)
     return locations["latitude"]

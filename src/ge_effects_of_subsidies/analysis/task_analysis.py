@@ -9,7 +9,7 @@ from ge_effects_of_subsidies.analysis.model import fit_logit_model, load_model
 from ge_effects_of_subsidies.analysis.predict import predict_prob_by_age
 from ge_effects_of_subsidies.config import BLD, GROUPS, SRC, CLEANED_DATA_PATH, MAPBOX_TOKEN
 from ge_effects_of_subsidies.utilities import read_yaml
-from ge_effects_of_subsidies.analysis.descriptive_analysis import _create_subsidy_map_2014, _plot_subsidies_per_year
+from ge_effects_of_subsidies.analysis.descriptive_analysis import _create_subsidy_map_2014, _plot_subsidies_per_year, _plot_subsidies_per_gdp_per_year
 
 
 
@@ -25,6 +25,19 @@ def task_plot_subsidies_per_year(depends_on = CLEANED_DATA_PATH,
     
     data = pd.read_pickle(depends_on)
     figure = _plot_subsidies_per_year(data)
+    figure.write_image(produces)
+
+
+
+dependencies_task_plot_subsidies_per_gdp_per_year = {"data" : CLEANED_DATA_PATH, 
+                                                     "gdp_data" : BLD / "python" / "data" / "data_gdp_clean.pkl"}
+
+def task_plot_subsidies_per_gdp_per_year(depends_on = dependencies_task_plot_subsidies_per_gdp_per_year, 
+                                         produces = BLD / "figures" / "subsidies_per_gdp_per_year.png"):
+    
+    data = pd.read_pickle(depends_on["data"])
+    gdp_data = pd.read_pickle(depends_on["gdp_data"])
+    figure = _plot_subsidies_per_gdp_per_year(data, gdp_data)
     figure.write_image(produces)
 
 
