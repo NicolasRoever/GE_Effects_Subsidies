@@ -34,10 +34,10 @@ def test_generate_zipcode_column():
     assert zipcodes[2] == '16244'
 
 
-def test_extract_latitude_expected_output():
-    zipcodes_test = ["94105", "94043", "94301"]
-    actual = _extract_latitude(zipcodes_test)
-    expected = [37.78846925026178, 22.368609, 47.79655491375995]
+def test_extract_longitude_expected_output():
+    zipcodes_test = ["01067", "95671"]
+    actual = _extract_longitude(zipcodes_test)
+    expected = [13.7269,  12.4332]
     assert np.isclose(np.array(expected), np.array(actual)).all()
 
 

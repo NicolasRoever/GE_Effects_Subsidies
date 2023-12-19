@@ -3,7 +3,8 @@
 import pandas as pd
 import os
 from pathlib import Path
-import geopy.geocoders as geocoders
+import pgeocode
+
 import numpy as np
 
 
@@ -31,39 +32,16 @@ def _get_all_file_data_paths(directory):
     data_paths = [Path(directory / item) for item in file_names]
     return data_paths
 
-def _extract_longitude(zipcodes):
-
-    geolocator = geocoders.Nominatim(user_agent="Economic-Subsidies")
-    longitudes = []
-    results = []
-
-    for zipcode in zipcodes:
-        result = geolocator.geocode(zipcode)
-        results.append(result)
-        # Extract latitude and longitude from each result and store them in separate lists
-        if result:
-            longitudes.append(result.longitude)
-        else:
-            longitudes.append(np.nan)
-    
-    return longitudes
+def _extract_longitude(zipcodes, country = "de"):
+    nomi = pgeocode.Nominatim(country)
+    locations = nomi.query_postal_code(zipcodes)
+    return locations["longitude"]
 
 
-def _extract_latitude(zipcodes):
-    geolocator = geocoders.Nominatim(user_agent="Economic-Subsidies")
-    latitudes = []
-    results = []
-
-    for zipcode in zipcodes:
-        result = geolocator.geocode(zipcode)
-        results.append(result)
-        # Extract latitude and longitude from each result and store them in separate lists
-        if result:
-            latitudes.append(result.latitude)
-        else:
-            latitudes.append(np.nan)
-    
-    return latitudes
+def _extract_latitude(zipcodes, country = "de"):
+    nomi = pgeocode.Nominatim(country)
+    locations = nomi.query_postal_code(zipcodes)
+    return locations["latitude"]
 
 
 
