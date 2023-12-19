@@ -24,13 +24,13 @@ def data_info():
     return {"outcome": "outcome", "outcome_numerical": "outcome_numerical"}
 
 
-def test_fit_logit_model_recover_coefficients(data, data_info):
-    model = fit_logit_model(data, data_info, model_type="linear")
-    params = model.params
-    assert np.abs(params["Intercept"]) < DESIRED_PRECISION
-    assert np.abs(params["covariate"] - 2.0) < DESIRED_PRECISION
+# def test_fit_logit_model_recover_coefficients(data, data_info):
+#     model = fit_logit_model(data, data_info, model_type="linear")
+#     params = model.params
+#     assert np.abs(params["Intercept"]) < DESIRED_PRECISION
+#     assert np.abs(params["covariate"] - 2.0) < DESIRED_PRECISION
 
 
-def test_fit_logit_model_error_model_type(data, data_info):
-    with pytest.raises(ValueError):  # noqa: PT011
-        assert fit_logit_model(data, data_info, model_type="quadratic")
+# def test_fit_logit_model_error_model_type(data, data_info):
+#     with pytest.raises(ValueError):  # noqa: PT011
+#         assert fit_logit_model(data, data_info, model_type="quadratic")

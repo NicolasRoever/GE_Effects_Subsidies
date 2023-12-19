@@ -3,6 +3,101 @@
 import pandas as pd
 import os
 from pathlib import Path
+import geopy.geocoders as geocoders
+import numpy as np
+
+
+
+def _clean_farm_subsidy_data_for_analysis(df):
+    data = pd.DataFrame()
+    data['country'] = df['country'].astype('category')
+    data['year'] = df['year'].astype('int16')
+    data['recipient_id'] = df["recipient_id"].astype('category')
+    data['recipient_name'] = df["recipient_name"].astype('str')
+    data["scheme_id"] = df["scheme_id"].astype('category')
+    data["amount_euro"] = df["amount_original"].astype('float32')
+    data["nuts_3"] = df["nuts3"].astype('category')
+    data["zipcode"] = _generate_zipcode_column(df)
+    data["longitude"] = _extract_longitude(data["zipcode"])
+    data["latitude"] = _extract_latitude(data["zipcode"])
+
+
+    return data
+    
+
+
+def _get_all_file_data_paths(directory):
+    file_names = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    data_paths = [Path(directory / item) for item in file_names]
+    return data_paths
+
+def _extract_longitude(zipcodes):
+
+    geolocator = geocoders.Nominatim(user_agent="Economic-Subsidies")
+    longitudes = []
+    results = []
+
+    for zipcode in zipcodes:
+        result = geolocator.geocode(zipcode)
+        results.append(result)
+        # Extract latitude and longitude from each result and store them in separate lists
+        if result:
+            longitudes.append(result.longitude)
+        else:
+            longitudes.append(np.nan)
+    
+    return longitudes
+
+
+def _extract_latitude(zipcodes):
+    geolocator = geocoders.Nominatim(user_agent="Economic-Subsidies")
+    latitudes = []
+    results = []
+
+    for zipcode in zipcodes:
+        result = geolocator.geocode(zipcode)
+        results.append(result)
+        # Extract latitude and longitude from each result and store them in separate lists
+        if result:
+            latitudes.append(result.latitude)
+        else:
+            latitudes.append(np.nan)
+    
+    return latitudes
+
+
+
+def _combine_all_data_into_df(file_paths):
+    dfs = []
+
+    for file_path in file_paths:
+        # Load the CSV file into a DataFrame
+        df = pd.read_csv(file_path)
+
+        # Append the DataFrame to the combined_df
+        dfs.append(df)
+
+    combined_df = pd.concat(dfs, ignore_index=True)
+
+    return combined_df
+
+def _generate_zipcode_column(df):
+    zipcodes = _extract_zipcode(df['recipient_address'])
+    #There is a mistake in the coding of one guy
+    mistake_indedx = df[df['recipient_name'] == 'Struck-Sievers, Joachim'].index
+    zipcodes[mistake_indedx] = '16244'
+    return zipcodes
+
+   
+def _extract_zipcode(address):
+    return address.str.extract('(\d+)', expand=False)
+
+
+
+#####################################################################################################################
+#####################################################################################################################
+#This was only the example code
+
 
 def clean_data(data, data_info):
     """Clean data set.
@@ -35,25 +130,3 @@ def clean_data(data, data_info):
     data[data_info["outcome_numerical"]] = numerical_outcome
 
     return data
-
-
-def _get_all_file_data_paths(directory):
-    file_names = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
-    data_paths = [Path(directory / item) for item in file_names]
-    return data_paths
-
-
-
-def _combine_all_data_into_df(file_paths):
-    dfs = []
-
-    for file_path in file_paths:
-        # Load the CSV file into a DataFrame
-        df = pd.read_csv(file_path)
-
-        # Append the DataFrame to the combined_df
-        dfs.append(df)
-
-    combined_df = pd.concat(dfs, ignore_index=True)
-
-    return combined_df
